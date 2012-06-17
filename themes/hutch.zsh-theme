@@ -1,5 +1,5 @@
 # the working directory ($HOME is abbreviated)
-local pwd='%{$fg[yellow]%}%~%{$reset_color%}'
+local pwd='%{$fg[cyan]%}%~%{$reset_color%}'
 # user@host
 local user='%{$fg[green]%}%n%{$fg[blue]%}@%{$fg[cyan]%}%m%{$reset_color%}'
 # what did the last command return?
