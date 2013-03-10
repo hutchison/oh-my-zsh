@@ -6,22 +6,22 @@
 
 # Use aptitude if installed, or apt-get if not.
 # You can just set apt_pref='apt-get' to override it.
-if [[ -e $( which aptitude ) ]]; then
+if [[ -e $( which aptitude 2>&1 ) ]]; then
     apt_pref='aptitude'
 else
     apt_pref='apt-get'
 fi
 
 # Use sudo by default if it's installed
-if [[ -e $( which sudo ) ]]; then
+if [[ -e $( which sudo 2>&1 ) ]]; then
     use_sudo=1
 fi
 
 # Aliases ###################################################################
 # These are for more obscure uses of apt-get and aptitude that aren't covered
 # below.
-#alias ag='apt-get'
-alias at='aptitude'
+alias ag='apt-get'
+alias ap='aptitude'
 
 # Some self-explanatory aliases
 alias acs="apt-cache search"
@@ -35,7 +35,7 @@ alias afs='apt-file search --regexp'
 
 # These are apt-get only
 alias asrc='apt-get source'
-alias ap='apt-cache policy'
+alias app='apt-cache policy'
 
 # superuser operations ######################################################
 if [[ $use_sudo -eq 1 ]]; then
@@ -47,7 +47,7 @@ if [[ $use_sudo -eq 1 ]]; then
     alias adg='sudo $apt_pref update && sudo $apt_pref upgrade'
     alias adu='sudo $apt_pref update && sudo $apt_pref dist-upgrade'
     alias afu='sudo apt-file update'
-    #alias ag='sudo $apt_pref upgrade'
+    alias ag='sudo $apt_pref upgrade'
     alias ai='sudo $apt_pref install'
     # Install all packages given on the command line while using only the first word of each line:
     # acs ... | ail
@@ -61,7 +61,8 @@ if [[ $use_sudo -eq 1 ]]; then
     # Install all .deb files in the current directory.
     # Warning: you will need to put the glob in single quotes if you use:
     # glob_subst
-    alias di='sudo dpkg -i ./*.deb'
+    alias dia='sudo dpkg -i ./*.deb'
+    alias di='sudo dpkg -i'
 
     # Remove ALL kernel images and headers EXCEPT the one in use
     alias kclean='sudo aptitude remove -P ?and(~i~nlinux-(ima|hea) \
@@ -81,7 +82,7 @@ else
     alias adg='su -lc \'$apt_pref update && aptitude safe-upgrade\' root'
     alias adu='su -lc \'$apt_pref update && aptitude dist-upgrade\' root'
     alias afu='su -lc "apt-file update"'
-    #alias ag='su -lc \'$apt_pref safe-upgrade\' root'
+    alias ag='su -lc \'$apt_pref safe-upgrade\' root'
     ai() {
         cmd="su -lc 'aptitude -P install $@' root"
         print "$cmd"
@@ -100,7 +101,8 @@ else
 
     # Install all .deb files in the current directory
     # Assumes glob_subst is off
-    alias di='su -lc "dpkg -i ./*.deb" root'
+    alias dia='su -lc "dpkg -i ./*.deb" root'
+    alias di='su -lc "dpkg -i" root'
 
     # Remove ALL kernel images and headers EXCEPT the one in use
     alias kclean='su -lc '\''aptitude remove -P ?and(~i~nlinux-(ima|hea) \
