@@ -1,7 +1,7 @@
 # the working directory ($HOME is abbreviated)
 local pwd='%{$fg[blue]%}%~%{$reset_color%}'
 # user@host
-local user='%{$fg[yellow]%}%n%{$reset_color%}'
+local user='%{$fg[green]%}%n%{$reset_color%}'
 local host='%{$fg[red]%}%m%{$reset_color%}'
 # what did the last command return?
 local return_code='%(?..%{$fg[red]%}%?↵%{$reset_color%})'
