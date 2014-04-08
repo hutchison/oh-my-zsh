@@ -1,27 +1,28 @@
 # Authors:
 # https://github.com/AlexBio
 # https://github.com/dbb
+# https://github.com/Mappleconfusers
 #
 # Debian-related zsh aliases and functions for zsh
 
 # Use aptitude if installed, or apt-get if not.
 # You can just set apt_pref='apt-get' to override it.
-if [[ -e $( which aptitude 2>&1 ) ]]; then
+if [[ -e $( which -p aptitude 2>&1 ) ]]; then
     apt_pref='aptitude'
 else
     apt_pref='apt-get'
 fi
 
 # Use sudo by default if it's installed
-if [[ -e $( which sudo 2>&1 ) ]]; then
+if [[ -e $( which -p sudo 2>&1 ) ]]; then
     use_sudo=1
 fi
 
 # Aliases ###################################################################
 # These are for more obscure uses of apt-get and aptitude that aren't covered
 # below.
-alias ap='aptitude'
-#alias ag='apt-get'
+alias age='apt-get'
+alias api='aptitude'
 
 # Some self-explanatory aliases
 alias acs="apt-cache search"
@@ -47,7 +48,7 @@ if [[ $use_sudo -eq 1 ]]; then
     alias adg='sudo $apt_pref update && sudo $apt_pref upgrade'
     alias adu='sudo $apt_pref update && sudo $apt_pref dist-upgrade'
     alias afu='sudo apt-file update'
-    #alias ag='sudo $apt_pref upgrade'
+    alias ag='sudo $apt_pref upgrade'
     alias ai='sudo $apt_pref install'
     # Install all packages given on the command line while using only the first word of each line:
     # acs ... | ail
@@ -56,7 +57,7 @@ if [[ $use_sudo -eq 1 ]]; then
     alias ar='sudo $apt_pref remove'
 
     # apt-get only
-    alias ads='sudo $apt_pref dselect-upgrade'
+    alias ads='sudo apt-get dselect-upgrade'
 
     # Install all .deb files in the current directory.
     # Warning: you will need to put the glob in single quotes if you use:
@@ -82,7 +83,7 @@ else
     alias adg='su -lc \'$apt_pref update && aptitude safe-upgrade\' root'
     alias adu='su -lc \'$apt_pref update && aptitude dist-upgrade\' root'
     alias afu='su -lc "apt-file update"'
-    #alias ag='su -lc \'$apt_pref safe-upgrade\' root'
+    alias ag='su -lc \'$apt_pref safe-upgrade\' root'
     ai() {
         cmd="su -lc 'aptitude -P install $@' root"
         print "$cmd"
@@ -109,6 +110,38 @@ else
         ?not(~n`uname -r`))'\'' root'
 fi
 
+# Completion ################################################################
+
+#
+# Registers a compdef for $1 that calls $apt_pref with the commands $2
+# To do that it creates a new completion function called _apt_pref_$2
+#
+apt_pref_compdef() {
+    local f fb
+    f="_apt_pref_${2}"
+
+    eval "function ${f}() {
+        shift words; 
+	service=\"\$apt_pref\"; 
+	words=(\"\$apt_pref\" '$2' \$words); 
+	((CURRENT++))
+	test \"\${apt_pref}\" = 'aptitude' && _aptitude || _apt
+    }"
+
+    compdef "$f" "$1"
+}
+
+apt_pref_compdef aac "autoclean"
+apt_pref_compdef abd "build-dep"
+apt_pref_compdef ac  "clean"
+apt_pref_compdef ad  "update"
+apt_pref_compdef afu "update"
+apt_pref_compdef ag  "upgrade"
+apt_pref_compdef ai  "install"
+apt_pref_compdef ail "install"
+apt_pref_compdef ap  "purge"
+apt_pref_compdef ar  "remove"
+apt_pref_compdef ads "dselect-upgrade"
 
 # Misc. #####################################################################
 # print all installed packages
@@ -182,5 +215,13 @@ kerndeb () {
 
     time fakeroot make-kpkg --append-to-version "$appendage" --revision \
         "$revision" kernel_image kernel_headers
+}
+
+# List packages by size
+function apt-list-packages {
+    dpkg-query -W --showformat='${Installed-Size} ${Package} ${Status}\n' | \
+    grep -v deinstall | \
+    sort -n | \
+    awk '{print $1" "$2}'
 }
 
