@@ -27,16 +27,10 @@ else
 fi
 # List direcory contents
 alias lsa='ls -lah'
-<<<<<<< HEAD
-alias l='ls -la'
-alias ll='ls -lh'
-alias la='ls -lA'
 alias sl=ls # often screw this up
-=======
 alias l='ls -lah'
 alias ll='ls -lh'
 alias la='ls -lAh'
->>>>>>> 1978a0923c864cacdc520adff83ed63f62c91073
 
 alias afind='ack-grep -il'
 
