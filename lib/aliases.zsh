@@ -13,14 +13,30 @@ alias please='sudo'
 #alias g='grep -in'
 
 # Show history
-alias history='fc -l 1'
-
+if [ "$HIST_STAMPS" = "mm/dd/yyyy" ]
+then
+    alias history='fc -fl 1'
+elif [ "$HIST_STAMPS" = "dd.mm.yyyy" ]
+then
+    alias history='fc -El 1'
+elif [ "$HIST_STAMPS" = "yyyy-mm-dd" ]
+then
+    alias history='fc -il 1'
+else
+    alias history='fc -l 1'
+fi
 # List direcory contents
 alias lsa='ls -lah'
+<<<<<<< HEAD
 alias l='ls -la'
 alias ll='ls -lh'
 alias la='ls -lA'
 alias sl=ls # often screw this up
+=======
+alias l='ls -lah'
+alias ll='ls -lh'
+alias la='ls -lAh'
+>>>>>>> 1978a0923c864cacdc520adff83ed63f62c91073
 
 alias afind='ack-grep -il'
 
