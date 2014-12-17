@@ -7,6 +7,14 @@ local host='%{$fg[red]%}%m%{$reset_color%}'
 local return_code='%(?..%{$fg[red]%}%?↵%{$reset_color%})'
 # the time in hh:mm:ss (24h format)
 local time="%*"
+# the prompt symbol depends on the underlying OS
+local regular_prompt_symbol="»"
+if [[ $(uname) == "Darwin" ]]; then
+    regular_prompt_symbol=""
+elif [[ $(uname) == "Linux" ]]; then
+    regular_prompt_symbol="🐧"
+fi
+local root_prompt_symbol="#"
 
 # for git_prompt_info
 ZSH_THEME_GIT_PROMPT_PREFIX=""
@@ -27,6 +35,6 @@ local git_branch='$(git_prompt_info)%{$reset_color%} $(git_prompt_status)%{$rese
 
 # pwd can be very long, so the whole first line is reserved for it (+ git stuff)
 PROMPT="${user} auf ${host} in ${pwd} ${git_branch}%E
-%(!. ▶. ») "
+%(!. ${root_prompt_symbol}. ${regular_prompt_symbol}) "
 
 RPROMPT="${return_code} ${time}"
